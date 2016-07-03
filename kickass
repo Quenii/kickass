@@ -1,0 +1,19 @@
+#!/bin/bash
+while true;
+do
+	maclist=(`iwinfo wlan0 assoclist | grep "dBm" | cut -f 1 -s -d " "`)
+	rxlist=(`iwinfo wlan0 assoclist | grep "dBm" | cut -f 3 -s -d " "`)
+	rxref="-80"
+	len=${#maclist[@]}
+	for((i=0;i<$len;i++))
+	do
+		mac=${maclist[$i]}
+		rx=${rxlist[$i]}
+		if [[ "$rx" > "$rxref" ]]; then
+			#echo $mac $rx
+			ubus call hostapd.wlan0 del_client '{"addr":"'"$mac"'", "reason": 5, "deauth": True, "ban_time": 3000}'
+			#ubus call hostapd.wlan0 list_bans
+		fi
+	done
+	sleep 1
+done
