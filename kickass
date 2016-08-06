@@ -1,8 +1,10 @@
 #!/bin/bash
 while true;
 do
-	maclist=(`iwinfo wlan0 assoclist | grep "dBm" | cut -f 1 -s -d " "`)
-	rxlist=(`iwinfo wlan0 assoclist | grep "dBm" | cut -f 3 -s -d " "`)
+	maclist=(`iw dev wlan0 station dump | grep "Station" | cut -f 2 -s -d " "`)
+	rxlist=(`iw dev wlan0 station dump | grep "signal:" | cut -f 3 -s -d " "`)
+	#maclist=(`iwinfo wlan0 assoclist | grep "dBm" | cut -f 1 -s -d " "`)
+	#rxlist=(`iwinfo wlan0 assoclist | grep "dBm" | cut -f 3 -s -d " "`)
 	rxref="-80"  #threshold
 	len=${#maclist[@]}
 	for((i=0;i<$len;i++))
